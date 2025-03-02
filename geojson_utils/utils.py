@@ -39,17 +39,28 @@ def sort_and_split(features: List[Feature], max_rows: int) -> List[FeatureCollec
     result: List[FeatureCollection] = []
     new_features: List[Feature] = []
     for name in segment_names:
-        feature_count: int = 0
         for idx in segment_names[name]:
             new_features.append(features[idx])
-            feature_count += 1
-            if feature_count >= max_rows:
+            if len(new_features) >= max_rows:
                 new_feature_collection: FeatureCollection = FeatureCollection(
                     features=new_features, type="FeatureCollection"
                 )
-                feature_count = 0
                 result.append(new_feature_collection)
                 new_features = []
+
+    start_coord_list: List[GeoCoord] = list(segment_starts.keys())
+    start_coord_list.sort()
+    new_features = []
+    for start_coord in start_coord_list:
+        segment_feature_indices: List[int] = segment_starts[start_coord]
+        for idx in range(0, len(segment_feature_indices)):
+            new_features.append(features[segment_feature_indices[idx]])
+            if len(new_features) >= max_rows:
+                new_feature_collection: FeatureCollection = FeatureCollection(
+                    features=new_features, type="FeatureCollection"
+                )
+                result.append(new_feature_collection)
+
     new_feature_collection: FeatureCollection = FeatureCollection(
         features=new_features,
         type="FeatureCollection",

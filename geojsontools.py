@@ -28,15 +28,15 @@ def split_geojson(max_rows, destination_dir, filename):
     print("Splitting GeoJSON file")
     print(f"max Rows: {max_rows}")
     print(f"filename: {filename}")
-    feature_colletion = read_geojson(filename=filename)
+    feature_collection = read_geojson(filename=filename)
 
-    feature_name: str = feature_colletion.name
-    features = feature_colletion.features
+    feature_name: str = feature_collection.name
+    features = feature_collection.features
     new_collection: List[geojson.FeatureCollection] = sort_and_split(
         features=features, max_rows=max_rows
     )
     for idx in range(len(new_collection)):
-        new_collection[idx].name = feature_colletion.name + "_part" + str(idx)
+        new_collection[idx].name = feature_name + "_part" + str(idx)
         output_filename: str = new_collection[idx].name + ".geojson"
         dest_path: str = output_filename
         if len(destination_dir) > 0:
